@@ -42,30 +42,45 @@ public class UserAppService : IUserAppService
         }
     }
 
-    public async Task<string> Login(LoginViewModel dto)
+    public async Task<TokenViewModel> Login(LoginViewModel viewModel)
     {
-        var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
+        var user = await _userManager.FindByEmailAsync(viewModel.Email);
+        if (user is not null && await _userManager.CheckPasswordAsync(user, viewModel.Password))
         {
-            var authClaims = new[]
+
+            var authClaims = new List<Claim>
             {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-        };
+                new (ClaimTypes.Name, user.UserName),
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
+            var userRoles = await _userManager.GetRolesAsync(user);
 
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Y2FzZGZhc2RmYXNkZmFzZGZhc2RmYXNkZmFzZGZhczEyMzQ1Ng=="));
+            foreach (var userRole in userRoles)
+                authClaims.Add(new(ClaimTypes.Role, userRole));
 
-            var token = new JwtSecurityToken(
-                issuer: "erik",
-                audience: "yokota",
-                expires: DateTime.Now.AddHours(3),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-              
+            return GetToken(authClaims);
         }
         throw new SystemContextException("Email ou senha inválidos.");
+    }
+
+    private TokenViewModel GetToken(List<Claim> authClaims)
+    {
+        var authSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["JWT:ValidIssuer"],
+            audience: _configuration["JWT:ValidAudience"],
+            expires: DateTime.Now.AddHours(1),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+        );
+
+        return new()
+        {
+            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            ValidTo = token.ValidTo
+        };
+
     }
 }

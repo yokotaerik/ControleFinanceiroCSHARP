@@ -1,8 +1,9 @@
 ﻿using ControleFinanceiro.Application.Interfaces;
 using ControleFinanceiro.Domain.Models;
-using ControleFinanceiro.Infra.Data.Repositories.Interfaces;
 using ControleFinanceiro.Util.Exceptions;
 using ControleFinanceiro.Application.ViewModels.Account;
+using ControleFinanceiro.Infra.Data.Repositories.Interfaces;
+using ControleFinanceiro.Application.Context;
 
 
 namespace ControleFinanceiro.Application.Services;
@@ -13,22 +14,39 @@ public class AccountAppService : IAccountAppService
     private readonly IAccountRepository _accountRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IUserContext _userContext;
 
-    public AccountAppService(IAccountRepository accountRepository, IUserRepository userRepository, ITransactionRepository transactionRepository)
+    public AccountAppService(IAccountRepository accountRepository, IUserRepository userRepository, ITransactionRepository transactionRepository, IUserContext userContext)
     {
-        _accountRepository=accountRepository;
-        _userRepository=userRepository;
-        _transactionRepository=transactionRepository;
+        _accountRepository = accountRepository;
+        _userRepository = userRepository;
+        _transactionRepository = transactionRepository;
+        _userContext = userContext;
     }
 
-    public async Task Create(CreateAccountViewModel dto)
+    public async Task<Account> Create(CreateAccountViewModel dto)
     {
-        await ValidateName(dto);
+        var userId = await _userContext.GetUserId();
 
-        Account newAccount = new(dto.Name, dto.Description, dto.UserId);
+        await ValidateName(dto, userId);
+
+        Account newAccount = new(dto.Name, dto.Description, userId);
         
         await _accountRepository.AddAsync(newAccount);
 
+        return newAccount;
+    }
+
+    public async Task<IEnumerable<Account>> GetAccountsByUserId()
+    {
+        var userId = await _userContext.GetUserId();
+        
+        return await _accountRepository.GetAccountsByUserId(userId);
+    }
+
+    public async Task<Account> GetWith5Transactions(Guid id)
+    {
+        return await _accountRepository.GetWith5Transactions(id) ?? throw new SystemContextException("Conta não encontrada");
     }
 
     public Task Delete(Guid id)
@@ -66,9 +84,9 @@ public class AccountAppService : IAccountAppService
 
 
     #region Validacoes 
-    private async Task ValidateName(CreateAccountViewModel dto)
+    private async Task ValidateName(CreateAccountViewModel dto, Guid userId)
     {
-        User user = await _userRepository.GetByIdWithAccounts(dto.UserId);
+        User user = await _userRepository.GetByIdWithAccounts(userId);
         bool nomeEmUso = user.Accounts.Where(a => a.Name == dto.Name).Any();
         if (nomeEmUso) throw new SystemContextException("Você possui uma conta com esse nome");
     }
@@ -80,6 +98,5 @@ public class AccountAppService : IAccountAppService
         if (nomeEmUso) throw new SystemContextException("Você possui uma conta com esse nome");
 
     }
-
     #endregion
 }

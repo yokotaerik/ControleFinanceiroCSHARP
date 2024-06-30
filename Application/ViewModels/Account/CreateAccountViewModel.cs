@@ -8,7 +8,5 @@ namespace ControleFinanceiro.Application.ViewModels.Account
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
         public string Name { get; set; }
         public string? Description { get; set; }
-        [Required(ErrorMessage = "O campo {2} é obrigatório.")]
-        public Guid UserId { get; set; }
     }
 }

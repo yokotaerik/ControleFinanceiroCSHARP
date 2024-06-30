@@ -51,10 +51,9 @@ namespace ControleFinanceiro.Application.ViewModels.Identity
     }
 
 
-    public class TokenResponseViewModel
+    public class TokenViewModel
     {
-        public string AccessToken { get; set; }
-        public double ExpiratioIn { get; set; }
-        public UserTokenViewModel UserToken { get; set; }
+        public string? Token { get; set; }
+        public DateTime ValidTo { get; set; }
     }
 }

@@ -6,5 +6,5 @@ namespace ControleFinanceiro.Application.Interfaces;
 public interface IUserAppService 
 {
     Task<User> Register(RegisterUserViewModel viewModel);
-    Task<string> Login(LoginViewModel viewModel);
+    Task<TokenViewModel> Login(LoginViewModel viewModel);
 }

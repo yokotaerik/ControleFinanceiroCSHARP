@@ -6,5 +6,5 @@ namespace ControleFinanceiro.Application.Interfaces;
 public interface ITransactionAppService
 {
     Task<Transaction> Create(CreateTransactionViewModel dto);
-    Task<IEnumerable<Transaction>> GetTransactionsBetweenDates(GetTransactionsViewModel dto);
+    Task<IEnumerable<Transaction>> GetTransactionsBetweenDates(GetTransactionsBetweenDatesViewModel dto);
 }

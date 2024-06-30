@@ -1,6 +1,6 @@
 ﻿namespace ControleFinanceiro.Application.ViewModels.Transaction 
 {
-    public class GetTransactionsViewModel
+    public class GetTransactionsBetweenDatesViewModel
     {
         public Guid AccountId { get; set; }
         public DateTime StartDate { get; set; }

@@ -10,6 +10,7 @@ namespace ControleFinanceiro.Domain.Models
         public string Name { get; set; }
         public string? Description { get; set; }
         public decimal Balance { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         // Relacionamentos
         public Guid? GoalId { get; set; }
@@ -24,6 +25,7 @@ namespace ControleFinanceiro.Domain.Models
             Description = description.IsNullOrEmpty() ? null : description;
             UserId = userId;
             Transactions = new List<Transaction>();
+            CreatedAt = DateTime.Now;
         }
 
         public Account Update(string? name, string? description) 

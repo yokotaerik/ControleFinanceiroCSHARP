@@ -2,6 +2,7 @@ using AutoMapper;
 using ControleFinanceiro.Application.Interfaces;
 using ControleFinanceiro.Application.ViewModels.Identity;
 using ControleFinanceiro.Util.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControleFinanceiro.Web.Controllers
@@ -46,7 +47,7 @@ namespace ControleFinanceiro.Web.Controllers
             try
             {
                 var token = await _userAppService.Login(viewModel);
-                return CustomResponse(new { token });
+                return CustomResponse(token);
 
             }
             catch (SystemContextException ex)
@@ -58,5 +59,10 @@ namespace ControleFinanceiro.Web.Controllers
                 return CustomResponse(ex);
             }
         }
+
+        [HttpGet]
+        [Route("authenticated")]
+        [Authorize]
+        public string GetAuthenticated() => $"Autenticado - {User?.Identity?.Name} ";
     }
 }

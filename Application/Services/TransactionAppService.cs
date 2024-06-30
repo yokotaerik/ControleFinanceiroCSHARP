@@ -39,9 +39,9 @@ public class TransactionAppService : ITransactionAppService
         return newTransaction;
     }
 
-    public async Task<IEnumerable<Transaction>> GetTransactionsBetweenDates(GetTransactionsViewModel dto)
+    public async Task<IEnumerable<Transaction>> GetTransactionsBetweenDates(GetTransactionsBetweenDatesViewModel viewModel)
     {
-        var transactions = await _transactionRepository.GetTransactionsBetweenDates(dto.AccountId, dto.StartDate, dto.EndDate);
+        var transactions = await _transactionRepository.GetTransactionsBetweenDates(viewModel.AccountId, viewModel.StartDate, viewModel.EndDate);
         return transactions;
     }
 }

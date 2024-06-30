@@ -17,4 +17,14 @@ public class AccountRepository : Repository<Account>, IAccountRepository
             .Where(a => a.UserId == userId)
             .ToListAsync();
     }
+
+    public async Task<Account?> GetWith5Transactions(Guid accountId)
+    {
+        return await _dbSet
+            .AsNoTracking()
+            .Include(a => a.Goal)
+            .Include(a => a.Transactions)
+                .Take(5)
+            .FirstOrDefaultAsync(a => a.Id == accountId);
+    }
 }
