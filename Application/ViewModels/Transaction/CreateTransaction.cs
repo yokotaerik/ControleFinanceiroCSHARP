@@ -11,6 +11,8 @@ namespace ControleFinanceiro.Application.ViewModels.Transaction
         public string? Category { get; set; }
         public TransactionType Type { get; set; }
         public Guid AccountId { get; set; }
+        public bool IsRepeat { get; set; }
+        public int? RepeatTimes { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
