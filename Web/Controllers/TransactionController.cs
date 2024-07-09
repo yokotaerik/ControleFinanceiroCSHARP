@@ -28,8 +28,8 @@ public class TransactionController : ApiController
         if (!ModelState.IsValid) return CustomResponse(ModelState);
         try
         {
-            var transaction = await _transactionAppService.Create(viewModel);
-            return CustomResponse(_mapper.Map<TransactionViewModel>(transaction));
+            await _transactionAppService.Create(viewModel);
+            return CustomResponse();
         }
         catch (SystemContextException ex)
         {

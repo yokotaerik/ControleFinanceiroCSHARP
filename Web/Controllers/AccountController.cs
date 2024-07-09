@@ -48,7 +48,7 @@ namespace ControleFinanceiro.Web.Controllers
             try
             {
                 var accounts = await _accountAppService.GetAccountsByUserId();
-                return CustomResponse(_mapper.Map<IEnumerable<AccountListViewModel>>(accounts));
+                return CustomResponse(accounts);
             }
             catch (SystemContextException ex)
             {
@@ -68,7 +68,7 @@ namespace ControleFinanceiro.Web.Controllers
             try
             {
                 var account = await _accountAppService.Create(viewModel);
-                return CustomResponse(_mapper.Map<AccountViewModel>(account));
+                return CustomResponse(account);
             }
             catch (SystemContextException ex)
             {

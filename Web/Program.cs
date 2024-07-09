@@ -51,6 +51,7 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>()
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<IMonthBalanceRepository, MonthBalanceRepository>();
 
 //Services
 builder.Services.AddScoped<IUserAppService, UserAppService>();
